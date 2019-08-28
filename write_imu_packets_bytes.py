@@ -9,7 +9,7 @@ sock_IMU = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock_IMU.bind((UDP_IP, UDP_port_IMU))
 #
 
-IMU_file = open('IMU_packet_bytes.txt', 'wb')
+IMU_file = open('IMU_byte_packet.txt', 'wb')
 j=0
 running = True
 start = time.time()
@@ -19,6 +19,7 @@ while running:
     print('iswriting dont bother:)')
     if keyboard.is_pressed('q'):
         running = False
+
 end = time.time()
 elapse = end - start
 sock_IMU.close()

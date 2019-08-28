@@ -2,8 +2,8 @@
 import time
 import struct
 
-f = open("IMU_packet_bytes.txt", 'rb')
-f_write = open("readable_IMU_packets.txt", 'w')
+f = open("IMU_byte_packet.txt", 'rb')
+f_write = open("IMU_utf-8_packet.txt", 'w')
 f_read = f.read()
 start = time.time()
 j = 0
