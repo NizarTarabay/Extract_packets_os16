@@ -65,7 +65,7 @@ def number_of_frames(file, mode):
 
 
 # =============== Build the array of images =============== #
-img_array_depth, list = number_of_frames('readable(if_on_each_azimuth_block).txt', mode)
+img_array_depth, list = number_of_frames('Lidar_utf-8_packet.txt', mode)
 img_array = np.zeros((img_array_depth, int(mode/4)+17, 16)).astype(np.int) # this is the array the contains all the pixels acquired by the sensor
 m, i, j, k, l = 0 , 0 ,0 , 0, 0
 enc_list = []
@@ -83,7 +83,7 @@ for m in range(0, len(list)):
                 break
         enc = ''
         enc = (int(enc.join(encoder_count)))
-        print(enc)
+        #print(enc)
         enc_list.append(enc)
 
 enc_min = min(enc_list)
@@ -96,11 +96,11 @@ for k in range(0, img_array_depth):
                 encoder_count = ['0']
                 s = 0
                 for c in list[l]:
-                    if s == 3 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
+                    if s == 3 and (c != ' ' or c != '\n'):  # s=3 encoder don't touch!
                         encoder_count.append(c)
                     if c == ' ':
                         s += 1
-                    if s == 4:  # s=1 or 2; 2 for reflectivity 1 for range
+                    if s == 4:  # s=4 encoder don't touch!
                         break
                 enc = ''
                 enc = (int(enc.join(encoder_count))-enc_min)/(44*(2048/mode))
@@ -108,11 +108,11 @@ for k in range(0, img_array_depth):
                 signal = ['0']
                 s = 0
                 for c in list[l]:
-                    if s == 1 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
+                    if s == 0 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
                         signal.append(c)
                     if c == ' ':
                         s += 1
-                    if s == 2:    # s=1 or 2; 2 for reflectivity 1 for range
+                    if s == 1:    # s=1 or 2; 2 for reflectivity 1 for range
                         break
                 sig = ''
                 sig = int(sig.join(signal))
@@ -151,8 +151,4 @@ for i in range(0, k):
     im = plt.imshow(np.rot90(b[i][0:int(mode/4)], 3))
     plt.axis('off')
     plt.pause(0.01)
-
-# add to git
-#now pushi it
-# ================= chech the shifting problrm ================== #
 
