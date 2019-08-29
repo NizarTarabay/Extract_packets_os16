@@ -1,9 +1,26 @@
 #---------------------------------- READ FROM A IMU BINARY FILE AND WRITE IN A HUMAN READBLE FORMAT ----------------------------------#
 import time
 import struct
+import os
 
-f = open("IMU_byte_packet.txt", 'rb')
-f_write = open("IMU_utf-8_packet.txt", 'w')
+# Create target Directory if don't exist
+save_directory = "/media/nizar/Transcend/test in the lab/Data/myFormat/IMU"
+
+if not os.path.exists(save_directory):
+    os.mkdir(save_directory)
+    print("Directory ", save_directory, " Created ")
+else:
+    print("Directory ", save_directory, " already exists")
+
+os.chdir('/media/nizar/Transcend/test in the lab/Data/Bytes/IMU')
+
+file_name_t = input("Time and date:")
+file_name = 'IMU_byte_packet_' + str(file_name_t) + '.txt'
+f = open('IMU_byte_packet_' + file_name_t + '.txt', 'rb')
+
+os.chdir('/media/nizar/Transcend/test in the lab/Data/myFormat/IMU')
+f_write = open('IMU_myFormat_packet_' + file_name_t + '.txt', 'w')
+
 f_read = f.read()
 start = time.time()
 j = 0
