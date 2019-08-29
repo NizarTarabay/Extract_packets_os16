@@ -2,26 +2,29 @@ import socket
 import time
 import struct
 import keyboard
-# UDP_IP = '10.5.5.1'
-# UDP_port = 7503
-#
-# sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#
-# sock.bind((UDP_IP, UDP_port))
-#
-# while True:
-#     data, addr = sock.recvfrom(UDP_port)
-#     # print('received msg:', data )
-#     print (struct.unpack('3Q6f', data))
-
+import os
+import datetime
 
 UDP_IP = '10.5.5.1'
 UDP_port = 7502
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 sock.bind((UDP_IP, UDP_port))
-f = open("Lidar_byte_packetdlt.txt", 'wb')
+
+# Create target Directory if don't exist
+save_directory = "/media/nizar/Transcend/test in the lab/Data/Bytes/Lidar"
+if not os.path.exists(save_directory):
+    os.mkdir(save_directory)
+    print("Directory ", save_directory, " Created ")
+else:
+    print("Directory ", save_directory, " already exists")
+os.chdir(save_directory)
+
+now = datetime.datetime.now()
+T = now.strftime("%Y-%m-%d %H:%M:%d")
+
+file_name = 'Lidar_byte_packet_' + T + '.txt'
+f = open(file_name, 'wb')
 j = 0
 running = True
 start1 = time.time()
@@ -58,4 +61,3 @@ print('Socket is closed!')
 f.close()
 print('\nFile is closed!\n')
 print('time: ', elapse1)
-
