@@ -1,4 +1,5 @@
 import numpy as np
+import os
 mode = 2048
 
 def number_of_frames(file, mode):
@@ -65,7 +66,10 @@ def number_of_frames(file, mode):
 
 
 # =============== Build the array of images =============== #
-img_array_depth, list = number_of_frames('Lidar_utf-8_packet.txt', mode)
+os.chdir('/media/nizar/Transcend/test in the lab/Data/myFormat/Lidar')
+file_name_t = input("Time and date:")
+file_name = 'Lidar_myFormat_packet_' + str(file_name_t) + '.txt'
+img_array_depth, list = number_of_frames(file_name, mode)
 img_array = np.zeros((img_array_depth, int(mode/4)+17, 16)).astype(np.int) # this is the array the contains all the pixels acquired by the sensor
 m, i, j, k, l = 0 , 0 ,0 , 0, 0
 enc_list = []
