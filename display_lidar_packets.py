@@ -1,6 +1,7 @@
 import numpy as np
 import os
 mode = 2048
+fps = 10
 
 def number_of_frames(file, mode):
     '''
@@ -68,8 +69,8 @@ def number_of_frames(file, mode):
 # =============== Build the array of images =============== #
 os.chdir('/media/nizar/Transcend/test in the lab/Data/myFormat/Lidar')
 file_name_t = input("Time and date:")
-file_name = 'Lidar_myFormat_packet_' + str(file_name_t) + '.txt'
-img_array_depth, list = number_of_frames(file_name, mode)
+file_name = 'Lidar_myFormat_packet_' + str(file_name_t)
+img_array_depth, list = number_of_frames(file_name + '.txt', mode)
 img_array = np.zeros((img_array_depth, int(mode/4)+17, 16)).astype(np.int) # this is the array the contains all the pixels acquired by the sensor
 m, i, j, k, l = 0 , 0 ,0 , 0, 0
 enc_list = []
@@ -115,11 +116,11 @@ for k in range(0, img_array_depth):
                     signal = ['0']
                     s = 0
                     for c in list[l]:
-                        if s == 2 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
+                        if s == 3 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
                             signal.append(c)
                         if c == ' ':
                             s += 1
-                        if s == 3:    # s=1 or 2; 2 for reflectivity 1 for range
+                        if s == 4:    # s=1 or 2; 2 for reflectivity 1 for range
                             break
                     # print (l)
                     sig = ''
@@ -157,7 +158,25 @@ for frame in range(0, k):
 im = plt.imshow(b[1][0:int(mode/4)])
 for i in range(0, k):
     # im.set_data(b[i][0:int(mode/4)])
-    im = plt.imshow(np.flip(np.rot90(b[i][0:int(mode/4)], 3),1))
+    im = plt.imshow(np.flip(np.rot90(b[i][0:int(mode/4)], 3), 1))
     plt.axis('off')
     plt.pause(0.01)
+
+import cv2
+# initialize water image
+height = 64
+width = int(mode / 4)
+water_depth = np.zeros((height, width), dtype=float)
+# initialize video writer
+fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+video_filename = file_name + '_ambient.avi'
+out = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
+# new frame after each addition of water
+for i in range(k):
+    #add this array to the video
+    gray = cv2.normalize(np.flip(np.rot90(b[i], 1), 1), None, 255, 0, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    gray_3c = cv2.merge([gray, gray, gray])
+    out.write(gray_3c)
+# close out the video writer
+out.release()
 
