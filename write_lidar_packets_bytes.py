@@ -21,7 +21,7 @@ else:
 os.chdir(save_directory)
 
 now = datetime.datetime.now()
-T = now.strftime("%Y-%m-%d %H:%M:%d")
+T = now.strftime("%Y-%m-%d %H:%M:%S")
 
 file_name = 'Lidar_byte_packet_' + T + '.txt'
 f = open(file_name, 'wb')
@@ -38,13 +38,16 @@ while running:
         #print (elapse)
         for i in range(0, 16):
 
-            f.write(data[8 + 788 * i: 16 + 788 * i])  # Frame ID data[(2*4+2) + 197 * 4 * i: (2*4+2 + 2) + 197 * 4 * i]
+            f.write(data[0 + 788 * i: 16 + 788 * i])  # Frame ID data[(2*4+2) + 197 * 4 * i: (2*4+2 + 2) + 197 * 4 * i]
 
             for j in range(0, 16):
 
                 f.write(data[(40 + 48*j + 788 * i):
                              (50 + 48*j + 788 * i)] )  # Range_mm_channel data[(((10+(4*3*j))*4) + 197 * 4 * i):
                                                                    #                       (((10+(4*3*j))*4+4) + 197 * 4 * i)
+
+            f.write(data[(196*4) + 197 * 4 * i: 196*4 + (4) + 197 * 4 * i])  # Frame ID data[(196*4) + 197 * 4 * i: (8) + 197 * 4 * i]
+
         #print('catcha')
         #data = sock.recv(12608)
 
