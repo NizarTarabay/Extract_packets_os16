@@ -18,15 +18,15 @@ def number_of_frames(file, mode):
     # =============== get the first frame number =============== #
     for line in lineList:
         if 'F' in line:
-            # print(line)
+            print(line)
             i = 0
             l = []
             for c in line:
-                if i == 1 and c != ' ':
+                if i == 3 and c != ' ':
                     l.append(c)
                 if c == ' ':
                     i += 1
-                if i == 2:
+                if i == 4:
                     break
             f1 = ''
             f1 = int(f1.join(l))
@@ -38,11 +38,11 @@ def number_of_frames(file, mode):
             i = 0
             l = []
             for c in line:
-                if i == 1 and c != ' ':
+                if i == 3 and c != ' ':
                     l.append(c)
                 if c == ' ':
                     i += 1
-                if i == 2:
+                if i == 4:
                     break
             f2 = ''
             f2 = int(f2.join(l))
@@ -51,7 +51,7 @@ def number_of_frames(file, mode):
     max_frame_reach = 0
     i = 0
     for line in lineList:
-        if i % 17 == 0:
+        if i % 18 == 0:
             if 'F 65535' in line:
                 # print(line)
                 max_frame_reach += 1
@@ -75,19 +75,19 @@ m, i, j, k, l = 0 , 0 ,0 , 0, 0
 enc_list = []
 #find the smallest encoder number
 for m in range(0, len(list)):
-    if m % 17 == 0:
+    if m % 18 == 0:
         encoder_count = ['0']
         s = 0
         for c in list[m]:
-            if s == 3 and (c != ' ' or c != '\n'):  # s=3 for encoder count
+            if s == 5 and (c != ' ' or c != '\n'):  # s=5 for encoder count
                 encoder_count.append(c)
             if c == ' ':
                 s += 1
-            if s == 4:  # s=4 for encoder count
+            if s == 6:  # s=6 for encoder count
                 break
         enc = ''
         enc = (int(enc.join(encoder_count)))
-        #print(enc)
+        print(enc)
         enc_list.append(enc)
 
 enc_min = min(enc_list)
@@ -95,32 +95,37 @@ enc_min = min(enc_list)
 for k in range(0, img_array_depth):
     # print(l)
     for j in range(0, int(mode/4)+17):
-        for i in range(0, 17):
-            if l % 17 == 0:
+        for i in range(0, 18):
+            if l % 18 == 0:
                 encoder_count = ['0']
                 s = 0
                 for c in list[l]:
-                    if s == 3 and (c != ' ' or c != '\n'):  # s=3 encoder don't touch!
+                    if s == 5 and (c != ' ' or c != '\n'):  # s=3 encoder don't touch!
                         encoder_count.append(c)
                     if c == ' ':
                         s += 1
-                    if s == 4:  # s=4 encoder don't touch!
+                    if s == 6:  # s=4 encoder don't touch!
                         break
                 enc = ''
                 enc = (int(enc.join(encoder_count))-enc_min)/(44*(2048/mode))
             else:
-                signal = ['0']
-                s = 0
-                for c in list[l]:
-                    if s == 0 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
-                        signal.append(c)
-                    if c == ' ':
-                        s += 1
-                    if s == 1:    # s=1 or 2; 2 for reflectivity 1 for range
-                        break
-                sig = ''
-                sig = int(sig.join(signal))
-                img_array[k][int(enc)][i-1] = sig
+                if (l+1)%18 == 0:
+                    print (list[l])
+                else:
+                    signal = ['0']
+                    s = 0
+                    for c in list[l]:
+                        if s == 2 and (c != ' ' or c != '\n'):  # s=1 or 0 1 for reflectivity 0 for range
+                            signal.append(c)
+                        if c == ' ':
+                            s += 1
+                        if s == 3:    # s=1 or 2; 2 for reflectivity 1 for range
+                            break
+                    # print (l)
+                    sig = ''
+                    sig = int(sig.join(signal))
+                    img_array[k][int(enc)][i-1] = sig
+
 
             l += 1
             # print(l)
@@ -152,7 +157,7 @@ for frame in range(0, k):
 im = plt.imshow(b[1][0:int(mode/4)])
 for i in range(0, k):
     # im.set_data(b[i][0:int(mode/4)])
-    im = plt.imshow(np.rot90(b[i][0:int(mode/4)], 3))
+    im = plt.imshow(np.flip(np.rot90(b[i][0:int(mode/4)], 3),1))
     plt.axis('off')
     plt.pause(0.01)
 
