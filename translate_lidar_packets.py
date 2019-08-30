@@ -26,22 +26,25 @@ f_read = f.read()
 
 start = time.time()
 for i in range(0, len(f_read)):
-    if i % 168 == 0:  # 168 number of bytes in each packet 8+16*10
-        f_write.write('F ' + str(struct.unpack('H', f_read[i+2:i+4])[0]) + ' ')  # Frame ID
-        f_write.write(str(struct.unpack('H', f_read[i:i+2])[0]) + ' ')  # Measurement ID
-        f_write.write(str(struct.unpack('I', f_read[i+4:i+8])[0]) + '\n')  # Encoder Count
+    if i % 180 == 0:  # 168 number of bytes in each packet 8+16*10
+        f_write.write('T ' + str(struct.unpack('L', f_read[i:i + 8])[0]) + ' ')  # Frame ID
+        f_write.write('F ' + str(struct.unpack('H', f_read[i+10:i+12])[0]) + ' ')  # Frame ID
+        f_write.write(str(struct.unpack('H', f_read[i+8:i+10])[0]) + ' ')  # Measurement ID
+        f_write.write(str(struct.unpack('I', f_read[i+12:i+16])[0]) + '\n')  # Encoder Count
         for j in range(0, 16):  # write the channel bytes
-            f_write.write(str(struct.unpack('I', f_read[i+8 + j*10:
-                                                        i+8 + j*10 + 4])[0]) + ' ')  # Range_mm_channel
+            f_write.write(str(struct.unpack('I', f_read[i+16 + j*10:
+                                                        i+16 + j*10 + 4])[0]) + ' ')  # Range_mm_channel
 
-            f_write.write(str(struct.unpack('H', f_read[i+8+4 + j*10:
-                                                        i+8+4 + j*10 + 2])[0]) + ' ')  # Reflectivity_channel
+            f_write.write(str(struct.unpack('H', f_read[i+16+4 + j*10:
+                                                        i+16+4 + j*10 + 2])[0]) + ' ')  # Reflectivity_channel
 
-            f_write.write(str(struct.unpack('H', f_read[i+8+4+2 + j*10:
-                                                        i+8+4+2 + j*10 + 2])[0]) + ' ')  # Signal_photons
+            f_write.write(str(struct.unpack('H', f_read[i+16+4+2 + j*10:
+                                                        i+16+4+2 + j*10 + 2])[0]) + ' ')  # Signal_photons
 
-            f_write.write(str(struct.unpack('H', f_read[i+8+4+2+2 + j*10:
-                                                        i+8+4+2+2 + j*10 + 2])[0]) + '\n')  # Noise_photons
+            f_write.write(str(struct.unpack('H', f_read[i+16+4+2+2 + j*10:
+                                                        i+16+4+2+2 + j*10 + 2])[0]) + '\n')  # Noise_photons
+
+        f_write.write(str(struct.unpack('i', f_read[i+176:i+180])[0]) + '\n')  # packet status (-1 good, 0 bad)
 
 end = time.time()
 elapse = end - start
