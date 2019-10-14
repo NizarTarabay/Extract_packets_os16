@@ -5,15 +5,19 @@ import cv2
 import seaborn as sns; sns.set()
 
 
-mode = 2048
-fps = 10
-
+mode = 1024
+fps = 20
+signal_list = ['range', 'reflectivity', 'signal', 'ambient']
+signal_name = input("Signal to display:")
+for idx, val in enumerate(signal_list):
+    if signal_name == val:
+        break
 
 # =============== Build the array of images =============== #
 os.chdir('/media/nizar/Transcend/test in the lab/Data/myFormat/Lidar')
 file_name_t = input("Time and date:")
 file_name = 'Lidar_myFormat_packet_' + str(file_name_t) + '.txt'
-img_array = get_signal(file_name, mode, 'reflectivity')
+img_array = get_signal(file_name, mode, signal_list[idx])
 ########################################################################################################################
 # # file_name = 'Lidar_myFormat_packet_' + str(file_name_t)
 # img_array_depth, list = number_of_frames(file_name , mode)
@@ -118,7 +122,7 @@ width = int(mode / 4)
 water_depth = np.zeros((height, width), dtype=float)
 # initialize video writer
 fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-video_filename = file_name + '_6sep_eve_reflectivity123.avi'
+video_filename = 'Lidar_myFormat_packet_' + str(file_name_t) + '_' + signal_list[idx] + '.avi'
 out = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
 # new frame after each addition of water
 for i in range(k):
