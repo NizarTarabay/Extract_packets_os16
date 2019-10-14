@@ -12,7 +12,7 @@ sock_IMU.bind((UDP_IP, UDP_port_IMU))
 #
 
 # Create target Directory if don't exist
-save_directory = "/media/nizar/Transcend/test in the lab/Data/Bytes/IMU"
+save_directory = "/home/nizar/test_in_the_lab/Bytes/IMU"
 if not os.path.exists(save_directory):
     os.mkdir(save_directory)
     print("Directory ", save_directory, " Created ")
