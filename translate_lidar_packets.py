@@ -45,6 +45,7 @@ for i in range(0, len(f_read)):
                                                         i+16+4+2+2 + j*10 + 2])[0]) + '\n')  # Noise_photons
 
         f_write.write(str(struct.unpack('i', f_read[i+176:i+180])[0]) + '\n')  # packet status (-1 good, 0 bad)
+    print(i)
 
 end = time.time()
 elapse = end - start
