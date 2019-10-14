@@ -12,7 +12,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_port))
 
 # Create target Directory if don't exist
-save_directory = "/media/nizar/Transcend/test in the lab/Data/Bytes/Lidar"
+save_directory = "/home/nizar/test_in_the_lab/Bytes/Lidar"
 if not os.path.exists(save_directory):
     os.mkdir(save_directory)
     print("Directory ", save_directory, " Created ")
@@ -32,18 +32,17 @@ while running:
     data = sock.recv(12608)
     start2 = time.time()
 
-    if int(struct.unpack('I', data[12:16])[0]) in range(33704, 56408): #range (33792 , 56320) ### data[12 + 197 * 4 * 0:16 + 197 * 4 * 0])[0]
-	#end = time.time()
+    if int(struct.unpack('I', data[12:16])[0]) in range(33704, 56408):  # range (33792 , 56320) data[12 + 197 * 4 * 0:16 + 197 * 4 * 0])[0]
+    #end = time.time()
         #elapse = end - start
         #print (elapse)
         for i in range(0, 16):
-
             f.write(data[0 + 788 * i: 16 + 788 * i])  # Frame ID data[(2*4+2) + 197 * 4 * i: (2*4+2 + 2) + 197 * 4 * i]
 
             for j in range(0, 16):
 
-                f.write(data[(40 + 48*j + 788 * i):
-                             (50 + 48*j + 788 * i)] )  # Range_mm_channel data[(((10+(4*3*j))*4) + 197 * 4 * i):
+                f.write(data[(28 + 48*j + 788 * i):
+                             (38 + 48*j + 788 * i)] )  # Range_mm_channel data[(((10+(4*3*j))*4) + 197 * 4 * i):
                                                                    #                       (((10+(4*3*j))*4+4) + 197 * 4 * i)
 
             f.write(data[(196*4) + 197 * 4 * i: 196*4 + (4) + 197 * 4 * i])  # Frame ID data[(196*4) + 197 * 4 * i: (8) + 197 * 4 * i]
