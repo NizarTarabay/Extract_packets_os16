@@ -229,3 +229,29 @@ def get_signal(file, mode, signal_name):
 #     '''
 #
 
+def resize_img(max_size):
+    '''
+    this function take image or image directory and resize the image(s) to the max_size input keeping the aspect ratio of the image
+    img_dir: img_dir path
+    max_size: output rescale size (width; assumption width of the input image is bigger than the height)
+    '''
+    from tkinter import filedialog
+    import os
+    import glob
+    import cv2
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
+    print(path_selected)
+
+    os.chdir(path_selected)
+    for filename in glob.glob("*.png"):
+        img = cv2.imread(filename, 0)
+        scale_percent = (max_size / img.shape[1]) * 100 # percent of original size
+        width = int(img.shape[1] * scale_percent / 100)
+        height = int(img.shape[0] * scale_percent / 100)
+        dim = (width, height)
+        # resize image
+        resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+        path = '/media/nizar/Transcend/test in the lab/Data/Build_synthetic_dataset/images'
+        cv2.imwrite(os.path.join(path, filename), resized)
+        cv2.waitKey(0)
