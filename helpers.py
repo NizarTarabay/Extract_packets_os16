@@ -235,7 +235,7 @@ def resize_img(max_size):
     img_dir: img_dir path
     max_size: output rescale size (width; assumption width of the input image is bigger than the height)
     '''
-    from tkinter import filedialog
+    from tkinter import filedialog, Tk
     import os
     import glob
     import cv2
