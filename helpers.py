@@ -254,4 +254,29 @@ def resize_img(max_size):
         resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
         path = '/media/nizar/Transcend/test in the lab/Data/Build_synthetic_dataset/images'
         cv2.imwrite(os.path.join(path, filename), resized)
-        cv2.waitKey(0)
+        #cv2.waitKey(0)
+
+def crop_image (output_size = 640):
+    '''
+    this function take an image and crop it equally to multiple images according to its output_size
+    :param input_size:
+    :return:
+    '''
+    from tkinter import filedialog, Tk
+    import os
+    import glob
+    import cv2
+
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
+    print(path_selected)
+
+    os.chdir(path_selected)
+    for filename in glob.glob("*.png"):
+        img = cv2.imread(filename, 0)
+        for i in range(0, 3):
+            crop_img = img[0: img.shape[0], output_size * i : output_size * i + output_size]
+            crop_img_resize = cv2.resize(crop_img, (output_size, output_size), interpolation=cv2.INTER_AREA)
+            path = '/media/nizar/Transcend/cocosynth/datasets/pavement_distress_synthetic/input/backgrounds/images_crp'
+            filename_crp = str(i) + '_' + filename
+            cv2.imwrite(os.path.join(path, filename_crp), crop_img_resize)
