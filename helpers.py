@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import math
+
 
 '''
 The following script contains function to extract information from myFormat file. 
@@ -221,68 +224,6 @@ def get_signal(file, mode, signal_name):
     return img_array
 
 
-#
-# def packet_checker ():
-#     '''
-#
-#     :return: this function returns a boolean indicates if the packet is good or bad
-#     '''
-#
-
-def resize_img(max_size):
-    '''
-    this function take image or image directory and resize the image(s) to the max_size input keeping the aspect ratio of the image
-    img_dir: img_dir path
-    max_size: output rescale size (width; assumption width of the input image is bigger than the height)
-    '''
-    from tkinter import filedialog, Tk
-    import os
-    import glob
-    import cv2
-    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
-    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
-    print(path_selected)
-
-    os.chdir(path_selected)
-    for filename in glob.glob("*.png"):
-        img = cv2.imread(filename, 0)
-        scale_percent = (max_size / img.shape[1]) * 100 # percent of original size
-        width = int(img.shape[1] * scale_percent / 100)
-        height = int(img.shape[0] * scale_percent / 100)
-        dim = (width, height)
-        # resize image
-        resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
-        path = '/media/nizar/Transcend/test in the lab/Data/Build_synthetic_dataset/images'
-        cv2.imwrite(os.path.join(path, filename), resized)
-        #cv2.waitKey(0)
-
-def crop_image (output_size = 640):
-    '''
-    this function take an image and crop it equally to multiple images according to its output_size
-    :param input_size:
-    :return:
-    '''
-    from tkinter import filedialog, Tk
-    import os
-    import glob
-    import cv2
-
-    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
-    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
-    print(path_selected)
-
-    os.chdir(path_selected)
-    for filename in glob.glob("*.png"):
-        img = cv2.imread(filename)
-        for i in range(0, 3):
-            crop_img = img[0: img.shape[0], output_size * i : output_size * i + output_size]
-            crop_img_resize = cv2.resize(crop_img, (output_size, output_size), interpolation=cv2.INTER_AREA)
-            path = '/media/nizar/Transcend/cocosynth/datasets/pavement_distress_synthetic/input/backgrounds/images_crp'
-            filename_crp = str(i) + '_' + filename
-            cv2.imwrite(os.path.join(path, filename_crp), crop_img_resize)
-
-
-
 def get_frame(file, mode, signal_name, frame_id):
     '''
     this function fetch a specific frame according to its frame id
@@ -453,9 +394,108 @@ def spherical_to_cartesian (spherical_coordinate_array, Lidar_direction, height)
 
     return cartesian_coordinate_array, z_array
 
-# def packet_checker ():
-#     '''
-#
-#     :return: this function returns a boolean indicates if the packet is good or bad
-#     '''
-#
+
+def resize_img(max_size):
+    '''
+    this function take image or image directory and resize the image(s) to the max_size input keeping the aspect ratio of the image
+    img_dir: img_dir path
+    max_size: output rescale size (width; assumption width of the input image is bigger than the height)
+    '''
+    from tkinter import filedialog, Tk
+    import os
+    import glob
+    import cv2
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
+    print(path_selected)
+
+    os.chdir(path_selected)
+    for filename in glob.glob("*.png"):
+        img = cv2.imread(filename, 0)
+        scale_percent = (max_size / img.shape[1]) * 100 # percent of original size
+        width = int(img.shape[1] * scale_percent / 100)
+        height = int(img.shape[0] * scale_percent / 100)
+        dim = (width, height)
+        # resize image
+        resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+        path = '/media/nizar/Transcend/test in the lab/Data/Build_synthetic_dataset/images'
+        cv2.imwrite(os.path.join(path, filename), resized)
+        #cv2.waitKey(0)
+
+
+def crop_image (output_size = 640):
+    '''
+    this function take an image and crop it equally to multiple images according to its output_size
+    :param input_size:
+    :return:
+    '''
+    from tkinter import filedialog, Tk
+    import os
+    import glob
+    import cv2
+
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    path_selected = filedialog.askdirectory()  # show an "Open" dialog box and return the path to the selected file
+    print(path_selected)
+
+    os.chdir(path_selected)
+    for filename in glob.glob("*.png"):
+        img = cv2.imread(filename)
+        for i in range(0, 3):
+            crop_img = img[0: img.shape[0], output_size * i : output_size * i + output_size]
+            crop_img_resize = cv2.resize(crop_img, (output_size, output_size), interpolation=cv2.INTER_AREA)
+            path = '/media/nizar/Transcend/cocosynth/datasets/pavement_distress_synthetic/input/backgrounds/images_crp'
+            filename_crp = str(i) + '_' + filename
+            cv2.imwrite(os.path.join(path, filename_crp), crop_img_resize)
+
+
+def hypebola_reference ():
+    '''
+
+    :return: points reference
+    '''
+    from mpl_toolkits.mplot3d import Axes3D
+    import math as m
+    sensor_direction = 53  # in degree
+    channel_angle = [14.8, 12.79, 10.78, 8.78, 6.77, 4.77, 2.76, 0.75,
+                     -1.25, -3.26, -5.27, -7.27, -9.28, -11.29, -13.29, -15.3]
+    mode = 2048
+    phi = m.radians(sensor_direction)  # sensor direction in radian
+    d = 1610  # distance in millimeter: sensor to the ground
+    t_list = []
+    x_list = []
+    y_list = []
+    z_list = []
+    theta_list = []
+    for i in range(0, int(mode / 4 )):
+        theta = (-90 / ((mode / 4) )) * i + 225
+        # print (theta)
+        # theta_list.append(theta)
+        theta = m.radians(theta)
+        # print(i)
+        for delta in channel_angle:
+            delta = m.radians(delta)
+            t = (m.cos(delta) * m.cos(theta) * (-d / m.cos(phi) / m.sin(delta))) / (
+                    1 - (-m.tan(phi) * m.cos(delta) * m.cos(theta) / m.sin(delta)))
+            x = t
+            if theta > 3.14159:
+                y = m.sqrt(abs(((t * -m.tan(phi) - d / m.cos(phi)) ** 2) / m.tan(delta) ** 2 - t ** 2))
+                # print('>180')
+                # print (theta)
+            else:
+                y = -m.sqrt(abs(((t * -m.tan(phi) - d / m.cos(phi)) ** 2) / m.tan(delta) ** 2 - t ** 2))
+                # print('<180')
+                # print (theta)
+            z = -m.tan(phi) * t - d / m.cos(phi)
+            # ---------------rotation------------- #
+            u = m.cos(-m.radians(53)) * x + m.sin(-m.radians(53)) * z
+            v = y
+            w = -m.sin(-m.radians(53)) * x + m.cos(-m.radians(53)) * z - 0
+            t_list.append(t)
+            x_list.append(u)
+            y_list.append(v)
+            z_list.append(w)
+    # plt.figure()
+    # ax = plt.axes(projection='3d')
+    # ax.scatter3D(x_list, y_list, z_list, cmap='Greens')
+    return x_list, y_list, z_list
