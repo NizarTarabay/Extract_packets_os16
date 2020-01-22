@@ -5,5 +5,3 @@ this repository include 5 main codes:
 4- translate_lidar_packet
 5- display_lidar_packet
 6- helpers contains functions for the display 
-
-transfer the checker to function
