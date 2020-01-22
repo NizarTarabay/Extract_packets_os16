@@ -15,14 +15,17 @@ def adjust_gamma(image, gamma=1.0):
     # apply gamma correction using the lookup table
     return cv2.LUT(image, table)
 
-os.chdir('/home/nizar/Desktop/videos_camera_lidar/2')
+
+os.chdir('/media/nizar/Transcend/pavement_distress_project/images/20191013135858/foreground/index')  # pickle file directory
 frame_crack_id = pickle.load(open("frame_crack.pkl", "rb"))
-cap = cv2.VideoCapture("2.MOV")
+cap = cv2.VideoCapture("/media/nizar/Transcend/pavement_distress_project/videos/20191013135858/rgb/2.MOV")
 total_frames = cap.get(7)
 
-os.chdir('/media/nizar/Transcend/test in the lab/Data/training_data/RGB_camera')
+# directory to save the extracted frames
+''' uncomment this section to extract frames from rgb cam'''
+os.chdir('/media/nizar/Transcend/pavement_distress_project/images/20191013135858/foreground/rgb')
 for i in range(1, len(frame_crack_id)):
-    filename = 'opencv' + str(i) + '.png'
+    filename = 'rgb' + str(frame_crack_id[i]) + '.png'
     cap.set(1, frame_crack_id[0] + frame_crack_id[i])
     ret, frame = cap.read()
     frame = np.rot90(frame, 2)
@@ -87,34 +90,35 @@ file_name_t = input("Time and date:")
 #     adjusted = adjust_gamma(img, gamma=3)
 #     cv2.imwrite(filename, adjusted)
 
-def fetch_lidar_frame (signal, file_name_t):
+def fetch_lidar_frame (signal, file_name_t, mode):
     '''
     this function fetch the frames that contains cracks or other distress
     :param signal: the lidar signal: range, reflectivity, signal, ambient
     :param file_name_t: file name: date and time e.g., 2019-10-13 13:58:58
     :return: save the frames in the corresponding directory
     '''
-    my_format_directory = '/media/nizar/Transcend/test in the lab/Data/myFormat/Lidar'
+    my_format_directory = '/media/nizar/Transcend/pavement_distress_project/myformat/20191013135858'  # lidar myformat directory
     os.chdir(my_format_directory)
     file_name = 'Lidar_myFormat_packet_' + str(file_name_t) + '.txt'
     img_array = helpers.get_signal(file_name, 2048, signal)
     print(signal + ' done \n')
 
-    training_directory = '/media/nizar/Transcend/test in the lab/Data/training_data'
-    os.chdir(training_directory + '/' + signal +'_lidar')
+    training_directory = '/media/nizar/Transcend/pavement_distress_project/images/20191013135858/foreground'
+    os.chdir(training_directory + '/' + signal)
     for i in range(1, len(frame_crack_id)):
-        filename = signal + '_lidar_' + str(i) + '.png'
+        filename = signal + str(frame_crack_id[i]) + '.png'
         frame = img_array[int(frame_crack_id[i] / 12)]
+        frame = frame[0:int(mode/4), :]
         frame = np.flip(np.rot90(frame, 3), 1)
-        img = cv2.resize(frame.astype('uint8'), (1024, 256))
+        img = cv2.resize(frame.astype('uint8'), (1920, 680))  # size of the output image
         adjusted = adjust_gamma(img, gamma=3)
         cv2.imwrite(filename, adjusted)
 
-
-fetch_lidar_frame('reflectivity', file_name_t)
-fetch_lidar_frame('ambient', file_name_t)
-fetch_lidar_frame('signal', file_name_t)
-fetch_lidar_frame('range', file_name_t)
+mode = 2048
+fetch_lidar_frame('reflectivity', file_name_t, mode)
+fetch_lidar_frame('ambient', file_name_t, mode)
+fetch_lidar_frame('signal', file_name_t, mode)
+fetch_lidar_frame('range', file_name_t, mode)
 
 
 
