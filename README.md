@@ -1,4 +1,4 @@
-this repository include 5 main codes:
+this repository includes 5 main codes:
 1- write_imu_packet_bytes
 2- write_lidar_packet_bytes
 3- translate_imu_packet
